@@ -10,6 +10,7 @@ import javax.xml.bind.Unmarshaller;
 
 import ch.makery.address.model.Person;
 import ch.makery.address.model.PersonListWrapper;
+import ch.makery.address.view.BirthdayStatisticsController;
 import ch.makery.address.view.PersonEditDialogController;
 import ch.makery.address.view.PersonOverviewController;
 import ch.makery.address.view.RootLayoutController;
@@ -75,41 +76,40 @@ public class MainApp extends Application {
 		initRootLayout();
 
 		showPersonOverview();
-	}   
+	}
 
 	/**
 	 * Initializes the root layout.
 	 */
 	/**
-	 * Initializes the root layout and tries to load the last opened
-	 * person file.
+	 * Initializes the root layout and tries to load the last opened person
+	 * file.
 	 */
 	public void initRootLayout() {
-	    try {
-	        // Load root layout from fxml file.
-	        FXMLLoader loader = new FXMLLoader();
-	        loader.setLocation(MainApp.class
-	                .getResource("view/RootLayout.fxml"));
-	        rootLayout = (BorderPane) loader.load();
+		try {
+			// Load root layout from fxml file.
+			FXMLLoader loader = new FXMLLoader();
+			loader.setLocation(MainApp.class.getResource("view/RootLayout.fxml"));
+			rootLayout = (BorderPane) loader.load();
 
-	        // Show the scene containing the root layout.
-	        Scene scene = new Scene(rootLayout);
-	        primaryStage.setScene(scene);
+			// Show the scene containing the root layout.
+			Scene scene = new Scene(rootLayout);
+			primaryStage.setScene(scene);
 
-	        // Give the controller access to the main app.
-	        RootLayoutController controller = loader.getController();
-	        controller.setMainApp(this);
+			// Give the controller access to the main app.
+			RootLayoutController controller = loader.getController();
+			controller.setMainApp(this);
 
-	        primaryStage.show();
-	    } catch (IOException e) {
-	        e.printStackTrace();
-	    }
+			primaryStage.show();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
-	    // Try to load last opened person file.
-	    File file = getPersonFilePath();
-	    if (file != null) {
-	        loadPersonDataFromFile(file);
-	    }
+		// Try to load last opened person file.
+		File file = getPersonFilePath();
+		if (file != null) {
+			loadPersonDataFromFile(file);
+		}
 	}
 
 	/**
@@ -185,6 +185,7 @@ public class MainApp extends Application {
 			return false;
 		}
 	}
+
 	/**
 	 * Returns the person file preference, i.e. the file that was last opened.
 	 * The preference is read from the OS specific registry. If no such
@@ -193,35 +194,37 @@ public class MainApp extends Application {
 	 * @return
 	 */
 	public File getPersonFilePath() {
-	    Preferences prefs = Preferences.userNodeForPackage(MainApp.class);
-	    String filePath = prefs.get("filePath", null);
-	    if (filePath != null) {
-	        return new File(filePath);
-	    } else {
-	        return null;
-	    }
+		Preferences prefs = Preferences.userNodeForPackage(MainApp.class);
+		String filePath = prefs.get("filePath", null);
+		if (filePath != null) {
+			return new File(filePath);
+		} else {
+			return null;
+		}
 	}
 
 	/**
 	 * Sets the file path of the currently loaded file. The path is persisted in
 	 * the OS specific registry.
 	 * 
-	 * @param file the file or null to remove the path
+	 * @param file
+	 *            the file or null to remove the path
 	 */
 	public void setPersonFilePath(File file) {
-	    Preferences prefs = Preferences.userNodeForPackage(MainApp.class);
-	    if (file != null) {
-	        prefs.put("filePath", file.getPath());
+		Preferences prefs = Preferences.userNodeForPackage(MainApp.class);
+		if (file != null) {
+			prefs.put("filePath", file.getPath());
 
-	        // Update the stage title.
-	        primaryStage.setTitle("AddressApp - " + file.getName());
-	    } else {
-	        prefs.remove("filePath");
+			// Update the stage title.
+			primaryStage.setTitle("AddressApp - " + file.getName());
+		} else {
+			prefs.remove("filePath");
 
-	        // Update the stage title.
-	        primaryStage.setTitle("AddressApp");
-	    }
+			// Update the stage title.
+			primaryStage.setTitle("AddressApp");
+		}
 	}
+
 	/**
 	 * Loads person data from the specified file. The current person data will
 	 * be replaced.
@@ -229,28 +232,27 @@ public class MainApp extends Application {
 	 * @param file
 	 */
 	public void loadPersonDataFromFile(File file) {
-	    try {
-	        JAXBContext context = JAXBContext
-	                .newInstance(PersonListWrapper.class);
-	        Unmarshaller um = context.createUnmarshaller();
+		try {
+			JAXBContext context = JAXBContext.newInstance(PersonListWrapper.class);
+			Unmarshaller um = context.createUnmarshaller();
 
-	        // Reading XML from the file and unmarshalling.
-	        PersonListWrapper wrapper = (PersonListWrapper) um.unmarshal(file);
+			// Reading XML from the file and unmarshalling.
+			PersonListWrapper wrapper = (PersonListWrapper) um.unmarshal(file);
 
-	        personData.clear();
-	        personData.addAll(wrapper.getPersons());
+			personData.clear();
+			personData.addAll(wrapper.getPersons());
 
-	        // Save the file path to the registry.
-	        setPersonFilePath(file);
+			// Save the file path to the registry.
+			setPersonFilePath(file);
 
-	    } catch (Exception e) { // catches ANY exception
-	        Alert alert = new Alert(AlertType.ERROR);
-	        alert.setTitle("Error");
-	        alert.setHeaderText("Could not load data");
-	        alert.setContentText("Could not load data from file:\n" + file.getPath());
+		} catch (Exception e) { // catches ANY exception
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Error");
+			alert.setHeaderText("Could not load data");
+			alert.setContentText("Could not load data from file:\n" + file.getPath());
 
-	        alert.showAndWait();
-	    }
+			alert.showAndWait();
+		}
 	}
 
 	/**
@@ -259,28 +261,54 @@ public class MainApp extends Application {
 	 * @param file
 	 */
 	public void savePersonDataToFile(File file) {
-	    try {
-	        JAXBContext context = JAXBContext
-	                .newInstance(PersonListWrapper.class);
-	        Marshaller m = context.createMarshaller();
-	        m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+		try {
+			JAXBContext context = JAXBContext.newInstance(PersonListWrapper.class);
+			Marshaller m = context.createMarshaller();
+			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
-	        // Wrapping our person data.
-	        PersonListWrapper wrapper = new PersonListWrapper();
-	        wrapper.setPersons(personData);
+			// Wrapping our person data.
+			PersonListWrapper wrapper = new PersonListWrapper();
+			wrapper.setPersons(personData);
 
-	        // Marshalling and saving XML to the file.
-	        m.marshal(wrapper, file);
+			// Marshalling and saving XML to the file.
+			m.marshal(wrapper, file);
 
-	        // Save the file path to the registry.
-	        setPersonFilePath(file);
-	    } catch (Exception e) { // catches ANY exception
-	        Alert alert = new Alert(AlertType.ERROR);
-	        alert.setTitle("Error");
-	        alert.setHeaderText("Could not save data");
-	        alert.setContentText("Could not save data to file:\n" + file.getPath());
+			// Save the file path to the registry.
+			setPersonFilePath(file);
+		} catch (Exception e) { // catches ANY exception
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Error");
+			alert.setHeaderText("Could not save data");
+			alert.setContentText("Could not save data to file:\n" + file.getPath());
 
-	        alert.showAndWait();
-	    }
+			alert.showAndWait();
+		} 
+	}
+
+	/**
+	 * Opens a dialog to show birthday statistics.
+	 */
+	public void showBirthdayStatistics() {
+		try {
+			// Load the fxml file and create a new stage for the popup.
+			FXMLLoader loader = new FXMLLoader();
+			loader.setLocation(MainApp.class.getResource("view/BirthdayStatistics.fxml"));
+			AnchorPane page = (AnchorPane) loader.load();
+			Stage dialogStage = new Stage();
+			dialogStage.setTitle("Birthday Statistics");
+			dialogStage.initModality(Modality.WINDOW_MODAL);
+			dialogStage.initOwner(primaryStage);
+			Scene scene = new Scene(page);
+			dialogStage.setScene(scene);
+
+			// Set the persons into the controller.
+			BirthdayStatisticsController controller = loader.getController();
+			controller.setPersonData(personData);
+
+			dialogStage.show();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
