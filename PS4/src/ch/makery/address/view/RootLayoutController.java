@@ -101,8 +101,8 @@ public class RootLayoutController {
 	private void handleAbout() {
 		Alert alert = new Alert(AlertType.INFORMATION);
 		alert.setTitle("AddressApp");  
-		alert.setHeaderText("About");
-		alert.setContentText("Author: Marco Jakob\nWebsite: http://code.makery.ch");
+		alert.setHeaderText("About:");
+		alert.setContentText("Practice Set 4\nKevin Faucher\nAuthor: Marco Jakob\nWebsite: http://code.makery.ch");
 
 		alert.showAndWait();
 	}
