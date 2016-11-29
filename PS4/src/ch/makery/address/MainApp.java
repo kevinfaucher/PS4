@@ -281,7 +281,7 @@ public class MainApp extends Application {
 			alert.setHeaderText("Could not save data");
 			alert.setContentText("Could not save data to file:\n" + file.getPath());
 
-			alert.showAndWait(); 
+			alert.showAndWait();  
 		} 
 	}
 
